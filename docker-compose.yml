@@ -1,0 +1,10 @@
+---
+services:
+  mongo:
+    image: mongo:8.0.4
+    container_name: festdb
+    environment:
+      - MONGO_INITDB_DATABASE=festdb
+    ports:
+      - "27017:27017"
+
