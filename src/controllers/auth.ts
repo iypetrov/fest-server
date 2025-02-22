@@ -15,7 +15,6 @@ class AuthController {
     constructor() {
         this.register = this.register.bind(this);
         this.login = this.login.bind(this);
-        this.logout = this.logout.bind(this);
     }
 
     private generateJwtToken(secret: string, email: string, role: string): string | null {
@@ -97,15 +96,6 @@ class AuthController {
         } catch (error) {
             console.error(error);
             res.status(500).send('Failed to login');
-        }
-    }
-
-    public async logout(req: Request, res: Response): Promise<void> {
-        try {
-            res.status(200).send('Logged out successfully');
-        } catch (error) {
-            console.error(error);
-            res.status(500).send('Failed to logout');
         }
     }
 }
