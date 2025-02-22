@@ -17,20 +17,11 @@ const userDocument = mongoose.model<UserEntity>('User', UserSchema);
 class UsersRepository {
     constructor() {
         this.create= this.create.bind(this);
-        this.findById = this.findById.bind(this);
         this.findByEmail = this.findByEmail.bind(this);
     }
 
     async create(email: string, password: string, role: string): Promise<UserEntity> {
         return new userDocument({ email, password, role }).save();
-    }
-
-    async findById(id: string): Promise<UserEntity | null> {
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            console.log('Invalid user id:', id);
-            return null; 
-        }
-        return userDocument.findById(new mongoose.Types.ObjectId(id));
     }
 
     async findByEmail(email: string): Promise<UserEntity | null> {

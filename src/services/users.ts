@@ -20,7 +20,6 @@ export interface UserModel {
 class UsersService {
     constructor() {
         this.createUser = this.createUser.bind(this);
-        this.getUserById = this.getUserById.bind(this);
         this.getUserByEmail = this.getUserByEmail.bind(this);
         this.validatePassword = this.validatePassword.bind(this);
     }
@@ -34,20 +33,6 @@ class UsersService {
 
         const user = await usersRepository.create(email, hashedPassword, role);
         if (!user) {
-            return null;
-        }
-
-        return { id: user.id, email: user.email, role: role }; 
-    }
-
-    async getUserById(id: string): Promise<UserModel | null> {
-        const user = await usersRepository.findById(id);
-        if (!user) {
-            return null;
-        }
-        
-        const role = getRoleFromString(user.role);
-        if (!role) {
             return null;
         }
 
