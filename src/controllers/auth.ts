@@ -39,7 +39,7 @@ class AuthController {
                 return;
             }
 
-            const existingUser = await usersService.getUserByEmail(email);
+            const existingUser = await usersService.getByEmail(email);
             if (existingUser) {
                 res.status(400).send('User already exists');
                 return;
@@ -51,7 +51,7 @@ class AuthController {
                 return;
             }
 
-            const user = await usersService.createUser(email, password);
+            const user = await usersService.create(email, password);
             if (!user) {
                 res.status(500).send('Failed to create a user');
                 return;
@@ -60,7 +60,6 @@ class AuthController {
             res.setHeader('Authorization', `Bearer ${token}`);
             res.status(201).json({ id: user.id, email: user.email, role: user.role });
         } catch (error) {
-            console.error(error);
             res.status(500).send('Failed to register');
         }
     }
@@ -73,7 +72,7 @@ class AuthController {
                 return;
             }
 
-            const user = await usersService.getUserByEmail(email);
+            const user = await usersService.getByEmail(email);
             if (!user) {
                 res.status(400).send("User doesn't exist");
                 return;
@@ -94,7 +93,6 @@ class AuthController {
             res.setHeader('Authorization', `Bearer ${token}`);
             res.status(200).json({ id: user.id, email: user.email, role: user.role });
         } catch (error) {
-            console.error(error);
             res.status(500).send('Failed to login');
         }
     }

@@ -20,11 +20,11 @@ export interface UserModel {
 class UsersService {
     constructor() {
         this.create = this.create.bind(this);
-        this.getUserByEmail = this.getUserByEmail.bind(this);
+        this.getByEmail = this.getByEmail.bind(this);
         this.validatePassword = this.validatePassword.bind(this);
     }
 
-    async create(email: string, password: string, userRole: string = Role.CLIENT): Promise<UserModel | null> {
+    public async create(email: string, password: string, userRole: string = Role.CLIENT): Promise<UserModel | null> {
         const hashedPassword = await bcrypt.hash(password, 10); 
         const role = getRoleFromString(userRole);
         if (!role) {
@@ -39,7 +39,7 @@ class UsersService {
         return { id: user.id, email: user.email, role: role }; 
     }
 
-    async getUserByEmail(email: string): Promise<UserModel | null> {
+    public async getByEmail(email: string): Promise<UserModel | null> {
         const user = await usersRepository.findByEmail(email);
         if (!user) {
             return null;
@@ -53,7 +53,7 @@ class UsersService {
         return { id: user.id, email: user.email, role: role }; 
     }
 
-    async validatePassword(email: string, password: string): Promise<boolean> {
+    public async validatePassword(email: string, password: string): Promise<boolean> {
         const user = await usersRepository.findByEmail(email);
         if (!user) {
             return false;
