@@ -19,12 +19,12 @@ export interface UserModel {
 
 class UsersService {
     constructor() {
-        this.createUser = this.createUser.bind(this);
+        this.create = this.create.bind(this);
         this.getUserByEmail = this.getUserByEmail.bind(this);
         this.validatePassword = this.validatePassword.bind(this);
     }
 
-    async createUser(email: string, password: string, userRole: string = Role.CLIENT): Promise<UserModel | null> {
+    async create(email: string, password: string, userRole: string = Role.CLIENT): Promise<UserModel | null> {
         const hashedPassword = await bcrypt.hash(password, 10); 
         const role = getRoleFromString(userRole);
         if (!role) {

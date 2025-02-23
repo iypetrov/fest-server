@@ -16,17 +16,19 @@ export async function isClient(req: Request, res: Response, next: NextFunction):
 
         const token = authHeader.split(" ")[1]; 
         const hmac = crypto.createHmac('sha256', JWT_SECRET).update(JWT_SECRET).digest('hex');
-        console.log(`Token: ${token}`);
-        console.log(`Secret: ${JWT_SECRET}`);
         jwt.verify(token, hmac, (err: jwt.VerifyErrors | null, decoded: jwt.JwtPayload | string | undefined) => {
-            console.log(err);
+            console.error(err);
             if (err) {
                 res.status(401).send('Unauthorized: Invalid token');
                 return;
             }
 
-            console.log('Decoded JWT:', decoded);
-            next();
+            if (typeof decoded === 'object' && 'role' in decoded) {
+                console.log(decoded.role);
+                next();
+            } else {
+                res.status(400).json({ error: 'Invalid token payload' });
+            }
         });
     } catch (error) {
         console.error('JWT authentication error:', error);

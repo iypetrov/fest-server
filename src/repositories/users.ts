@@ -4,12 +4,14 @@ export interface UserEntity extends Document {
     email: string;
     password: string;
     role: string;
+    createdAt: Date;
 }
 
 const UserSchema = new mongoose.Schema<UserEntity>({
     email: { type: String, required: true },
     password: { type: String, required: true },
     role : { type: String, required: true },
+    createdAt: { type: Date, default: Date.now },
 });
 
 const userDocument = mongoose.model<UserEntity>('User', UserSchema);
