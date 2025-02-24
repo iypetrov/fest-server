@@ -10,6 +10,12 @@ export interface TicketEntity extends Document {
     createdAt: Date;
 }
 
+interface TicketSummary {
+    type: string;
+    price: number;
+    availableCount: number;
+}
+
 const TicketSchema = new mongoose.Schema<TicketEntity>({
     eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Event', required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
@@ -26,6 +32,7 @@ class TicketsRepository {
     constructor() {
         this.createBulk = this.createBulk.bind(this);
         this.findAvailableTicket = this.findAvailableTicket.bind(this);
+        this.getTicketSummaryByEventId = this.getTicketSummaryByEventId.bind(this);
     }
 
     public async createBulk(
@@ -64,6 +71,33 @@ class TicketsRepository {
         });
 
         return ticket;
+    }
+
+    public async getTicketSummaryByEventId(eventId: string): Promise<TicketSummary[]> {
+        if (!mongoose.Types.ObjectId.isValid(eventId)) {
+            console.log('Invalid event id:', eventId);
+            return [];
+        }
+
+        const summary = await ticketDocument.aggregate<TicketSummary>([
+            { $match: { eventId: new mongoose.Types.ObjectId(eventId), status: 'AVAILABLE' } },
+            {
+                $group: {
+                    _id: { type: '$type', price: '$price' },
+                    availableCount: { $sum: 1 },
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    type: '$_id.type',
+                    price: '$_id.price',
+                    availableCount: 1,
+                },
+            },
+        ]);
+
+        return summary;
     }
 }
 

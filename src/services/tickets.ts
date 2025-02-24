@@ -1,3 +1,4 @@
+import { availableMemory } from 'process';
 import { ticketsRepository } from '../repositories/tickets';
 
 export enum Status {
@@ -28,6 +29,12 @@ export interface TicketModel {
     status: Status;
     purchasedAt: Date;
     createdAt: Date;
+}
+
+export interface TicketSummaryModel {
+    type: Type;
+    price: number;
+    availableCount: number;
 }
 
 class TicketsService {
@@ -76,7 +83,6 @@ class TicketsService {
     ): Promise<TicketModel | null> {
         const ticketType = getTicketTypeFromString(type);
         if (!ticketType) {
-            console.log("hello 1");
             return null;
         }
 
@@ -86,7 +92,6 @@ class TicketsService {
             price
         );
         if (!ticket) {
-            console.log("hello 2");
             return null;
         }
 
@@ -100,6 +105,16 @@ class TicketsService {
             purchasedAt: ticket.purchasedAt,
             createdAt: ticket.createdAt,
         };
+    }
+
+    public async getTicketSummaryByEventId(eventId: string): Promise<TicketSummaryModel[] | null> {
+        const ticketsSummary = await ticketsRepository.getTicketSummaryByEventId(eventId);
+
+        return ticketsSummary.map((summary) => ({
+            type: getTicketTypeFromString(summary.type), 
+            price: summary.price, 
+            availableCount: summary.availableCount,
+        }));
     }
 }
 

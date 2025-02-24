@@ -26,6 +26,27 @@ class TicketsController {
             res.status(500).send('Failed to create bulk tickets');
         }
     }
+
+    public async getTicketSummaryByEventId(req: Request, res: Response): Promise<void> {
+        try {
+            const { id } = req.params;
+            if (!id) {
+                res.status(400).send('Event id is not provided');
+                return;
+            }
+
+            const summary = await ticketsService.getTicketSummaryByEventId(id);
+            if (!summary) {
+                res.status(400).send('No ticket\'s summary for event');
+                return;
+            }
+
+            res.status(200).json(summary);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Failed to get ticket\'s summary for event');
+        }
+    }
 }
 
 export const ticketsController = new TicketsController();
