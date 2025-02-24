@@ -2,13 +2,13 @@ import { ticketsRepository } from '../repositories/tickets';
 
 export enum Status {
     AVAILABLE = 'AVAILABLE',
-        RESERVED = 'RESERVED',
-        SOLD = 'SOLD',
+    RESERVED = 'RESERVED',
+    SOLD = 'SOLD',
 }
 
 export enum Type {
     STANDARD = 'STANDARD',
-        VIP = 'VIP',
+    VIP = 'VIP',
 }
 
 const getTicketStatusFromString = (status: string): Status | null => {
@@ -43,7 +43,6 @@ class TicketsService {
         quantity: number
     ): Promise<TicketModel[]> {
         const ticketType = getTicketTypeFromString(type);
-
         if (!ticketType || quantity <= 0) {
             return [];
         }
@@ -72,12 +71,12 @@ class TicketsService {
 
     public async getAvailableTicket(
         eventId: string,
-        type: string,
-        price: number
+        price: number,
+        type: string
     ): Promise<TicketModel | null> {
         const ticketType = getTicketTypeFromString(type);
-
         if (!ticketType) {
+            console.log("hello 1");
             return null;
         }
 
@@ -86,8 +85,8 @@ class TicketsService {
             ticketType,
             price
         );
-
         if (!ticket) {
+            console.log("hello 2");
             return null;
         }
 
