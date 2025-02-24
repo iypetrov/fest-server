@@ -2,11 +2,11 @@ import mongoose, { Document } from 'mongoose';
 
 export interface TicketEntity extends Document {
     eventId: mongoose.Types.ObjectId;
-    userId: mongoose.Types.ObjectId;
+    userId: mongoose.Types.ObjectId | null;
     price: number;  
     type: string;
     status: string;
-    purchasedAt: Date;
+    purchasedAt: Date | null;
     createdAt: Date;
 }
 
