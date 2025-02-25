@@ -38,17 +38,16 @@ export const decodeJwtToken = async (req: Request): Promise<JwtPayload | null> =
 
         const token = authHeader.split(" ")[1];
         const hmac = crypto.createHmac('sha256', JWT_SECRET).update(JWT_SECRET).digest('hex');
-        jwt.verify(token, hmac, async (err, decoded) => {
-            if (err) {
-                return null;
-            }
 
-            if (typeof decoded === 'object' && decoded !== null) {
-                const payload = decoded as JwtPayload;
-                return payload;
-            } else {
-                return null;
-            }
+        return new Promise((resolve, reject) => {
+            jwt.verify(token, hmac, (err, decoded) => {
+                if (err) {
+                    console.error("JWT verification error:", err);
+                    resolve(null);
+                } else {
+                    resolve(decoded as JwtPayload);
+                }
+            });
         });
     } catch (error) {
         console.error('JWT authentication error:', error);
