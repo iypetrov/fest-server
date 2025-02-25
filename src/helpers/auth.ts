@@ -5,8 +5,6 @@ import { Request, Response, NextFunction } from 'express';
 
 dotenv.config();
 
-const ENV = process.env.ENV;
-const JWT_SECRET = process.env.JWT_SECRET || "";
 export const COOKIE_NAME = 'FEST_JWT_TOKEN';
 
 export interface JwtPayload {
@@ -37,7 +35,7 @@ export const decodeJwtToken = async (req: Request): Promise<JwtPayload | null> =
         }
 
         const token = authHeader.split(" ")[1];
-        const hmac = crypto.createHmac('sha256', JWT_SECRET).update(JWT_SECRET).digest('hex');
+        const hmac = crypto.createHmac('sha256', process.env.JWT_SECRET).update(process.env.JWT_SECRET).digest('hex');
 
         return new Promise((resolve, reject) => {
             jwt.verify(token, hmac, (err, decoded) => {
