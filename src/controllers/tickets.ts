@@ -27,6 +27,27 @@ class TicketsController {
         }
     }
 
+    public async getById(req: Request, res: Response): Promise<void> {
+        try {
+            const { id } = req.params;
+            if (!id) {
+                res.status(400).send('Ticket id is required');
+                return;
+            }
+
+            const event = await ticketsService.getById(id);
+            if (!event) {
+                res.status(404).send('Ticket not found');
+                return;
+            }
+
+            res.status(200).json(event);
+        } catch (error) {
+            console.error('Error getting event:', error);
+            res.status(500).send('Failed to get event');
+        }
+    }
+
     public async getTicketSummaryByEventId(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;

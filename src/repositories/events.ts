@@ -47,7 +47,6 @@ class EventsRepository {
 
     public async findById(id: string): Promise<EventEntity | null> {
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            console.log('Invalid event id:', id);
             return null;
         }
         return eventDocument.findById(new mongoose.Types.ObjectId(id));
@@ -55,7 +54,6 @@ class EventsRepository {
 
     public async updateThumbnailUrl(id: string, thumbnailUrl: string): Promise<EventEntity | null> {
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            console.log('Invalid event id:', id);
             return null;
         }
 

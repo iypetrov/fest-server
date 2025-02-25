@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 
 import { Role, usersService } from '../services/users';
+import { generateJwtToken } from '../helpers/auth';
 
 dotenv.config();
 
@@ -15,20 +16,6 @@ class AuthController {
     constructor() {
         this.register = this.register.bind(this);
         this.login = this.login.bind(this);
-    }
-
-    private generateJwtToken(secret: string, email: string, role: string): string | null {
-        const hmac = crypto.createHmac('sha256', secret).update(secret).digest('hex');
-        try {
-            return jwt.sign(
-                { email, role },
-                hmac,
-                { expiresIn: '8h' }
-            );
-        } catch (error) {
-            console.error("Error generating token:", error);
-            return null;
-        }
     }
 
     public async register(req: Request, res: Response): Promise<void> {
@@ -45,15 +32,15 @@ class AuthController {
                 return;
             }
 
-            const token = this.generateJwtToken(JWT_SECRET, email, Role.CLIENT);
-            if (!token) {
-                res.status(500).send('Failed to generate token');
-                return;
-            }
-
             const user = await usersService.create(email, password);
             if (!user) {
                 res.status(500).send('Failed to create a user');
+                return;
+            }
+
+            const token = await generateJwtToken(JWT_SECRET, user.id, email, Role.CLIENT);
+            if (!token) {
+                res.status(500).send('Failed to generate token');
                 return;
             }
 
@@ -84,7 +71,7 @@ class AuthController {
                 return;
             }
 
-            const token = this.generateJwtToken(JWT_SECRET, email, Role.CLIENT);
+            const token = await generateJwtToken(JWT_SECRET, user.id, email, Role.CLIENT);
             if (!token) {
                 res.status(500).send('Failed to generate token');
                 return;

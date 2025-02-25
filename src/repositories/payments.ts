@@ -23,6 +23,7 @@ const paymentDocument = mongoose.model<PaymentEntity>('Payment', PaymentSchema);
 class PaymentsRepository {
     constructor() {
         this.create = this.create.bind(this);
+        this.findById = this.findById.bind(this);
         this.setFinishedAtByTicketId = this.setFinishedAtByTicketId.bind(this);
     }
 
@@ -40,9 +41,15 @@ class PaymentsRepository {
         }).save();
     }
 
+    public async findById(id: string): Promise<PaymentEntity | null> {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return null;
+        }
+        return paymentDocument.findById(new mongoose.Types.ObjectId(id));
+    }
+
     public async setFinishedAtByTicketId(ticketId: string): Promise<void> {
         if (!mongoose.Types.ObjectId.isValid(ticketId)) {
-            console.log('Invalid ticket id:', ticketId);
             return;
         }
 

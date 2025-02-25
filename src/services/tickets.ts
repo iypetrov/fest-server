@@ -107,6 +107,24 @@ class TicketsService {
         };
     }
 
+    public async getById(id: string): Promise<TicketModel| null> {
+        const ticket = await ticketsRepository.findById(id);
+        if (!ticket) {
+            return null;
+        }
+
+        return {
+            id: ticket.id,
+            eventId: ticket.eventId.toString(),
+            userId: ticket.userId?.toString(),
+            price: ticket.price,
+            type: getTicketTypeFromString(ticket.type),
+            status: getTicketStatusFromString(ticket.status),
+            purchasedAt: ticket.purchasedAt,
+            createdAt: ticket.createdAt,
+        };
+    }
+
     public async getTicketSummaryByEventId(eventId: string): Promise<TicketSummaryModel[] | null> {
         const ticketsSummary = await ticketsRepository.getTicketSummaryByEventId(eventId);
 

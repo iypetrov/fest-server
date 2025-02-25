@@ -59,7 +59,6 @@ class TicketsRepository {
         price: number
     ): Promise<TicketEntity | null> {
         if (!mongoose.Types.ObjectId.isValid(eventId)) {
-            console.log('Invalid event id:', eventId);
             return null;
         }
 
@@ -73,9 +72,15 @@ class TicketsRepository {
         return ticket;
     }
 
+    public async findById(id: string): Promise<TicketEntity | null> {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return null;
+        }
+        return ticketDocument.findById(new mongoose.Types.ObjectId(id));
+    }
+
     public async getTicketSummaryByEventId(eventId: string): Promise<TicketSummary[]> {
         if (!mongoose.Types.ObjectId.isValid(eventId)) {
-            console.log('Invalid event id:', eventId);
             return [];
         }
 
