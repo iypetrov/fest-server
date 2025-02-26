@@ -83,7 +83,7 @@ class PaymentsController {
     }
 
     public async getPublishableKey(req: Request, res: Response): Promise<void> {
-        const publishableKey = paymentsService.getPublishableKey();
+        const publishableKey = await paymentsService.getPublishableKey();
         res.status(200).json({publishableKey: publishableKey});
     }
 }
