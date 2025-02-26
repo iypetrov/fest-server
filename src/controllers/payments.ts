@@ -37,13 +37,13 @@ class PaymentsController {
                 return;
             }
 
-            const event = await paymentsService.create(userId, ticketId, ticket.price);
-            if (!event) {
+            const payment = await paymentsService.create(userId, ticketId, ticket.price);
+            if (!payment) {
                 res.status(404).send('Payment not found');
                 return;
             }
 
-            res.status(200).json(event);
+            res.status(200).json(payment);
         } catch (error) {
             console.error('Error getting payment:', error);
             res.status(500).send('Failed to get payment');

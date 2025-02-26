@@ -68,6 +68,31 @@ class TicketsController {
             res.status(500).send('Failed to get ticket\'s summary for event');
         }
     }
+
+    public async getAvailableTicket(req: Request, res: Response): Promise<void> {
+        try {
+            const { eventId, price, type } = req.query;
+            if (!eventId || !price || !type) {
+                res.status(400).send('Query params for available ticket are not provided');
+                return;
+            }
+
+            const summary = await ticketsService.getAvailableTicket(
+                eventId.toString(),
+                parseFloat(price.toString()),
+                type.toString()
+            );
+            if (!summary) {
+                res.status(400).send('No available ticket for event');
+                return;
+            }
+
+            res.status(200).json(summary);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Failed to get available ticket for event');
+        }
+    }
 }
 
 export const ticketsController = new TicketsController();

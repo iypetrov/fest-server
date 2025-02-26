@@ -1,9 +1,17 @@
-import { paymentsRepository } from '../repositories/payments';
 import dotenv from 'dotenv';
+import Stripe from 'stripe';
+
+import { paymentsRepository } from '../repositories/payments';
 
 dotenv.config();
 
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: '2025-02-24.acacia'
+});
+
+
 export interface PaymentModel {
+    clientSecret: string,
     id: string;
     userId: string; 
     ticketId: string;
@@ -25,15 +33,23 @@ class PaymentsService {
         ticketId: string,
         price: number,
     ): Promise<PaymentModel| null> {
-        const providerId = "";
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: price * 100, 
+            currency: 'usd',
+            automatic_payment_methods: {
+                enabled: true,
+            },
+        });
+
         const payment = await paymentsRepository.create(
             userId,
             ticketId,
-            providerId,
+            paymentIntent.id,
             price
         );
 
         return {
+            clientSecret: paymentIntent.client_secret,
             id: payment.id,
             userId: payment.userId.toString(),
             ticketId: payment.ticketId.toString(),
@@ -51,6 +67,7 @@ class PaymentsService {
         }
 
         return {
+            clientSecret: "",
             id: payment.id,
             userId: payment.userId.toString(),
             ticketId: payment.ticketId.toString(),
