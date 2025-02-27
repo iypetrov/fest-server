@@ -25,6 +25,7 @@ class PaymentsRepository {
         this.create = this.create.bind(this);
         this.findById = this.findById.bind(this);
         this.setFinishedAtByTicketId = this.setFinishedAtByTicketId.bind(this);
+        this.findByProviderId = this.findByProviderId.bind(this);
     }
 
     public async create(
@@ -57,6 +58,10 @@ class PaymentsRepository {
             { ticketId: new mongoose.Types.ObjectId(ticketId) },
             { $set: { finishedAt: new Date() } }
         );
+    }
+
+    public async findByProviderId(providerId: string): Promise<PaymentEntity[]> {
+        return paymentDocument.find({ providerId });
     }
 }
 

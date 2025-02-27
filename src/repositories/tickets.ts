@@ -33,6 +33,7 @@ class TicketsRepository {
         this.createBulk = this.createBulk.bind(this);
         this.findAvailableTicket = this.findAvailableTicket.bind(this);
         this.getTicketSummaryByEventId = this.getTicketSummaryByEventId.bind(this);
+        this.updateTicketStatus = this.updateTicketStatus.bind(this);
     }
 
     public async createBulk(
@@ -103,6 +104,21 @@ class TicketsRepository {
         ]);
 
         return summary;
+    }
+
+    public async updateTicketStatus(id: string, status: string): Promise<TicketEntity | null> {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return null;
+        }
+
+        const updateFields: Partial<TicketEntity> = { status };
+        updateFields.purchasedAt = new Date();
+
+        return ticketDocument.findByIdAndUpdate(
+            new mongoose.Types.ObjectId(id),
+            { $set: updateFields },
+            { new: true } 
+        );
     }
 }
 

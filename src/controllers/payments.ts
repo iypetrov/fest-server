@@ -1,9 +1,17 @@
 import { Request, Response } from 'express';
+import dotenv from 'dotenv';
+import Stripe from 'stripe';
 
 import { paymentsService } from '../services/payments';
 import { ticketsService } from '../services/tickets';
 import { usersService } from '../services/users';
 import { decodeJwtToken, JwtPayload } from '../helpers/auth';
+
+dotenv.config();
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: '2025-02-24.acacia'
+});
 
 class PaymentsController {
     constructor() {
@@ -85,6 +93,33 @@ class PaymentsController {
     public async getPublishableKey(req: Request, res: Response): Promise<void> {
         const publishableKey = await paymentsService.getPublishableKey();
         res.status(200).json({publishableKey: publishableKey});
+    }
+
+    public async handleWebhook(req: Request, res: Response): Promise<void> {
+        try {
+            const sig = req.headers["stripe-signature"];
+            if (!sig) {
+                res.status(400).send("Missing Stripe signature");
+                return;
+            }
+
+            const event = stripe.webhooks.constructEvent(
+                req.body, 
+                sig,
+                process.env.STRIPE_WEBHOOK_SECRET!
+            );
+
+            switch (event.type) {
+                case "payment_intent.succeeded": {
+                    const intent = event.data.object as Stripe.PaymentIntent;
+                    await paymentsService.handleWebhookEvent(intent.id);
+                    res.status(200).send("Received");
+                }
+            }
+        } catch (error) {
+            console.error('Error handleing webhook event:', error);
+            res.status(400).send(`Webhook Error: ${error.message}`);
+        }
     }
 }
 

@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 
 import router from './routers';
+import { paymentsController } from './controllers/payments';
 
 dotenv.config();
 const PORT = process.env.PORT || 8080;
@@ -21,6 +22,8 @@ app.use(cors({
     credentials: true
 }));
 app.options('*', cors());
+
+app.post('/payments/webhook', express.raw({ type: "application/json" }), paymentsController.handleWebhook);
 
 app.use(compression());
 app.use(bodyParser.json());

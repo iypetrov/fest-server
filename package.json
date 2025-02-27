@@ -5,7 +5,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "stripe": "stripe listen --forward-to http://localhost:8080/payments/webhook --forward-connect-to http://localhost:8080/payments/webhook"
   },
   "keywords": [],
   "author": "Ilia Petrov",

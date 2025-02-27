@@ -41,6 +41,8 @@ class TicketsService {
     constructor() {
         this.createBulk = this.createBulk.bind(this);
         this.getAvailableTicket = this.getAvailableTicket.bind(this);
+        this.getById = this.getById.bind(this);
+        this.getTicketSummaryByEventId = this.getTicketSummaryByEventId.bind(this);
     }
 
     public async createBulk(
