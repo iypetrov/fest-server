@@ -112,13 +112,22 @@ class PaymentsController {
             switch (event.type) {
                 case "payment_intent.succeeded": {
                     const intent = event.data.object as Stripe.PaymentIntent;
-                    await paymentsService.handleWebhookEvent(intent.id);
-                    res.status(200).send("Received");
+
+                    paymentsService.handleWebhookEvent(intent.id)
+                    .then(() => console.log("Webhook processed successfully"))
+                    .catch(error => console.error("Error processing webhook:", error));
+
+                    res.status(200).send("Received");  
+                    return;
                 }
             }
+
+            res.status(200).send("Unhandled event type");  
+            return;
         } catch (error) {
-            console.error('Error handleing webhook event:', error);
+            console.error('Error handling webhook event:', error);
             res.status(400).send(`Webhook Error: ${error.message}`);
+            return;
         }
     }
 }
