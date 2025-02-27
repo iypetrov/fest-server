@@ -32,6 +32,10 @@ class ImagesService {
                 ACL: 'private',
             }));
 
+            if (prefix === "ticket") {
+                return `http://localhost:8080/api/v0/${key}/invoice`;
+            }
+
             return `http://localhost:8080/api/v0/${key}/thumbnail`;
         } catch (error) {
                 console.error('Error uploading image:', error);
