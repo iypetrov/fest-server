@@ -45,16 +45,16 @@ class PaymentsController {
                 return;
             }
 
-            const payment = await paymentsService.create(userId, ticketId, ticket.price);
+            const payment = await paymentsService.create(userId, ticketId, Math.round(ticket.price * 100));
             if (!payment) {
-                res.status(404).send('Payment not found');
+                res.status(404).send('Payment failed to create');
                 return;
             }
 
             res.status(200).json(payment);
         } catch (error) {
-            console.error('Error getting payment:', error);
-            res.status(500).send('Failed to get payment');
+            console.error('Error creating payment:', error);
+            res.status(500).send('Failed to create payment');
         }
     }
 
