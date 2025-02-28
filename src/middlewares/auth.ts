@@ -17,7 +17,7 @@ export async function isClient(req: Request, res: Response, next: NextFunction):
             return;
         }
 
-        if (payload.role !== Role.CLIENT) {
+        if (payload.role !== Role.CLIENT && payload.role !== Role.ADMIN) {
             res.status(403).json({ error: 'Only client users have access to this' });
         } else {
             next();

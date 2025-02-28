@@ -38,7 +38,7 @@ class AuthController {
                 return;
             }
 
-            const token = await generateJwtToken(JWT_SECRET, user.id, email, Role.CLIENT);
+            const token = await generateJwtToken(JWT_SECRET, user.id, user.email, user.role);
             if (!token) {
                 res.status(500).send('Failed to generate token');
                 return;
@@ -71,7 +71,7 @@ class AuthController {
                 return;
             }
 
-            const token = await generateJwtToken(JWT_SECRET, user.id, email, Role.CLIENT);
+            const token = await generateJwtToken(JWT_SECRET, user.id, user.email, user.role);
             if (!token) {
                 res.status(500).send('Failed to generate token');
                 return;
