@@ -119,7 +119,12 @@ class PaymentsService {
         user: UserEntity
     ): Promise<void> {
         const invoice = this.generateTicketInvoiceHtml(ticket, event, user);
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({
+            executablePath: '/usr/bin/chromium-browser', 
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            headless: true,
+        });
+
         const page = await browser.newPage();
         await page.setContent(invoice);
         const pdfBuffer = await page.pdf({ format: "A4" });
